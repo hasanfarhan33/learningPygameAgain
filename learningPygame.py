@@ -12,15 +12,31 @@ clock = pygame.time.Clock()
 # Font 
 mainFont = pygame.font.Font("font\Pixeltype.ttf", 50)
 
-groundSurface = pygame.image.load("graphics\ground.png")
-skySurface = pygame.image.load("graphics\Sky.png")
-textSurface = mainFont.render("Learning Pygame", False, "black")
+groundSurface = pygame.image.load("graphics\ground.png").convert()
+skySurface = pygame.image.load("graphics\Sky.png").convert()
+
+scoreSurface = mainFont.render("SCORE: ", False, (64, 64, 64))
+scoreRectangle = scoreSurface.get_rect(center = (screen.get_width() // 2, 50))
+
+snailSurface = pygame.image.load("graphics\snail\snail1.png").convert_alpha()
+snailRectangle = snailSurface.get_rect(midbottom = (600, 300))
+
+
+playerSurface = pygame.image.load("graphics\player\player_stand.png").convert_alpha()
+playerRectangle = playerSurface.get_rect(midbottom = (80, 300)) 
+
 
 while True: 
+    # Event Loop
     for event in pygame.event.get():
         if event.type == pygame.QUIT: 
             pygame.quit()
-            exit() 
+            exit()
+        
+        # Checking if the mouse is over the player rectangle 
+        # if event.type == pygame.MOUSEMOTION: 
+        #     if(playerRectangle.collidepoint(event.pos)): 
+        #         print("Hovering over player")
     
     # draw all elements 
     '''
@@ -55,7 +71,42 @@ while True:
     screen.blit(groundSurface, (0, 300))
 
     # Adding the text 
-    screen.blit(textSurface, (300, 50))
+    pygame.draw.rect(screen, "#c0e8ec", scoreRectangle, 10) # Draws border around text 
+    pygame.draw.rect(screen, "#c0e8ec", scoreRectangle) # Fills the border 
+    screen.blit(scoreSurface, scoreRectangle)
+
+    # Drawing a line from top left to bottom right 
+    # pygame.draw.line(screen, "Blue", (0, 0), (screen.get_width(), screen.get_height()), 3)
+
+    # Drawing a circle that follows the mouse 
+    # pygame.draw.circle(screen, "black", pygame.mouse.get_pos(), 5)
+
+    # Adding the snail 
+    # if(snailXPos < 0 - snailSurface.get_width() - 5):
+    #     snailXPos = screen.get_width() + snailSurface.get_width()
+    # else: 
+    #     snailXPos -= 4
+
+    # Better way to animate 
+    snailRectangle.x -= 4 
+    if snailRectangle.right < 0 - snailSurface.get_width() - 5: 
+        # snailRectangle.left = screen.get_width() + snailSurface.get_width() + 5 
+        snailRectangle.left = screen.get_width()
+    
+    # Checking collision between snail and player 
+    # if snailRectangle.colliderect(playerRectangle): 
+    #     print("Collision has occured")
+
+    # Mouse Functions
+    # if(playerRectangle.collidepoint((pygame.mouse.get_pos()))): 
+    #     # print("Mouse in player")
+    #     leftClick, midClick, rightClick = pygame.mouse.get_pressed()
+    #     if leftClick: 
+    #         print("Clicked on the player")
+
+    screen.blit(snailSurface, snailRectangle)
+
+    screen.blit(playerSurface, playerRectangle)
 
     # update everything 
     pygame.display.update() 
