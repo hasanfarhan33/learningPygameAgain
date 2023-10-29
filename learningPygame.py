@@ -1,7 +1,19 @@
 import pygame
 from sys import exit
 
+startTime = 0
+
+def display_score(): 
+    # mainFont = pygame.font.Font("font\Pixeltype.ttf", 50)
+    curTime = (pygame.time.get_ticks()) // 1000 - startTime
+    scoreSurface = mainFont.render("SCORE: " + str(curTime), False, (64, 64, 64))
+    scoreRectangle = scoreSurface.get_rect(center=(screen.get_width()//2, 50))
+    screen.blit(scoreSurface, scoreRectangle)
+
 pygame.init() 
+
+# Font 
+mainFont = pygame.font.Font("font\Pixeltype.ttf", 50)
 
 pygame.display.set_caption("Learning Pygame Again")
 screen = pygame.display.set_mode((800, 400))
@@ -9,14 +21,13 @@ screen = pygame.display.set_mode((800, 400))
 # Used to control the frame rate 
 clock = pygame.time.Clock() 
 
-# Font 
-mainFont = pygame.font.Font("font\Pixeltype.ttf", 50)
+
 
 groundSurface = pygame.image.load("graphics\ground.png").convert()
 skySurface = pygame.image.load("graphics\Sky.png").convert()
 
-scoreSurface = mainFont.render("SCORE: ", False, (64, 64, 64))
-scoreRectangle = scoreSurface.get_rect(center = (screen.get_width() // 2, 50))
+# scoreSurface = mainFont.render("SCORE: ", False, (64, 64, 64))
+# scoreRectangle = scoreSurface.get_rect(center = (screen.get_width() // 2, 50))
 
 snailSurface = pygame.image.load("graphics\snail\snail1.png").convert_alpha()
 snailRectangle = snailSurface.get_rect(midbottom = (600, 300))
@@ -28,6 +39,8 @@ playerGravity = 0 # Implementing Gravity
 
 # Game States 
 gameActive = True 
+
+
 
 while True: 
     # Event Loop
@@ -55,7 +68,8 @@ while True:
         else: 
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 gameActive = True
-                snailRectangle.left = screen.get_width() + 5   
+                snailRectangle.left = screen.get_width() + 5
+                startTime = (pygame.time.get_ticks()) // 1000   
     
     # draw all elements 
     '''
@@ -91,9 +105,10 @@ while True:
         screen.blit(groundSurface, (0, 300))
 
         # Adding the text 
-        pygame.draw.rect(screen, "#c0e8ec", scoreRectangle, 10) # Draws border around text 
-        pygame.draw.rect(screen, "#c0e8ec", scoreRectangle) # Fills the border 
-        screen.blit(scoreSurface, scoreRectangle)
+        # pygame.draw.rect(screen, "#c0e8ec", scoreRectangle, 10) # Draws border around text 
+        # pygame.draw.rect(screen, "#c0e8ec", scoreRectangle) # Fills the border 
+        # screen.blit(scoreSurface, scoreRectangle)
+        display_score()
 
         # SNAIL 
         snailRectangle.x -= 4 
