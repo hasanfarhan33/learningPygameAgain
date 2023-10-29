@@ -24,7 +24,10 @@ snailRectangle = snailSurface.get_rect(midbottom = (600, 300))
 
 playerSurface = pygame.image.load("graphics\player\player_stand.png").convert_alpha()
 playerRectangle = playerSurface.get_rect(midbottom = (80, 300)) 
+playerGravity = 0 # Implementing Gravity
 
+# Game States 
+gameActive = True 
 
 while True: 
     # Event Loop
@@ -32,11 +35,27 @@ while True:
         if event.type == pygame.QUIT: 
             pygame.quit()
             exit()
-        
-        # Checking if the mouse is over the player rectangle 
-        # if event.type == pygame.MOUSEMOTION: 
-        #     if(playerRectangle.collidepoint(event.pos)): 
-        #         print("Hovering over player")
+
+        if gameActive: 
+            # KEYBOARD INPUTS
+            if event.type == pygame.KEYDOWN: 
+                if event.key == pygame.K_SPACE and playerRectangle.bottom >= 300: 
+                    # print("Space")
+                    playerGravity = -20
+            
+            # if event.type == pygame.KEYUP: 
+            #     print("Key up")
+
+            
+            
+            # Checking if I clicked on the player 
+            if event.type == pygame.MOUSEBUTTONDOWN and playerRectangle.bottom >= 300: 
+                if(playerRectangle.collidepoint(event.pos)): 
+                    playerGravity = -20
+        else: 
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                gameActive = True
+                snailRectangle.left = screen.get_width() + 5   
     
     # draw all elements 
     '''
@@ -64,49 +83,39 @@ while True:
     3. Blit the surface 
     '''
 
-    # Drawing the sky 
-    screen.blit(skySurface, (0, 0)) # blit stands for block image transfer
+    if gameActive: 
+        # Drawing the sky 
+        screen.blit(skySurface, (0, 0)) # blit stands for block image transfer
 
-    # Drawing the ground 
-    screen.blit(groundSurface, (0, 300))
+        # Drawing the ground 
+        screen.blit(groundSurface, (0, 300))
 
-    # Adding the text 
-    pygame.draw.rect(screen, "#c0e8ec", scoreRectangle, 10) # Draws border around text 
-    pygame.draw.rect(screen, "#c0e8ec", scoreRectangle) # Fills the border 
-    screen.blit(scoreSurface, scoreRectangle)
+        # Adding the text 
+        pygame.draw.rect(screen, "#c0e8ec", scoreRectangle, 10) # Draws border around text 
+        pygame.draw.rect(screen, "#c0e8ec", scoreRectangle) # Fills the border 
+        screen.blit(scoreSurface, scoreRectangle)
 
-    # Drawing a line from top left to bottom right 
-    # pygame.draw.line(screen, "Blue", (0, 0), (screen.get_width(), screen.get_height()), 3)
+        # SNAIL 
+        snailRectangle.x -= 4 
+        if snailRectangle.right < 0 - snailSurface.get_width() - 5: 
+            # snailRectangle.left = screen.get_width() + snailSurface.get_width() + 5 
+            snailRectangle.left = screen.get_width()
+        
+        screen.blit(snailSurface, snailRectangle)
 
-    # Drawing a circle that follows the mouse 
-    # pygame.draw.circle(screen, "black", pygame.mouse.get_pos(), 5)
+        # PLAYER 
+        playerGravity += 1
+        playerRectangle.y += playerGravity
+        # Making sure that the player doesn't go through the floor
+        if(playerRectangle.bottom > 300):
+            playerRectangle.bottom = 300
+        screen.blit(playerSurface, playerRectangle)
 
-    # Adding the snail 
-    # if(snailXPos < 0 - snailSurface.get_width() - 5):
-    #     snailXPos = screen.get_width() + snailSurface.get_width()
-    # else: 
-    #     snailXPos -= 4
-
-    # Better way to animate 
-    snailRectangle.x -= 4 
-    if snailRectangle.right < 0 - snailSurface.get_width() - 5: 
-        # snailRectangle.left = screen.get_width() + snailSurface.get_width() + 5 
-        snailRectangle.left = screen.get_width()
-    
-    # Checking collision between snail and player 
-    # if snailRectangle.colliderect(playerRectangle): 
-    #     print("Collision has occured")
-
-    # Mouse Functions
-    # if(playerRectangle.collidepoint((pygame.mouse.get_pos()))): 
-    #     # print("Mouse in player")
-    #     leftClick, midClick, rightClick = pygame.mouse.get_pressed()
-    #     if leftClick: 
-    #         print("Clicked on the player")
-
-    screen.blit(snailSurface, snailRectangle)
-
-    screen.blit(playerSurface, playerRectangle)
+        # Collision between player and snail 
+        if playerRectangle.colliderect(snailRectangle): 
+            gameActive = False
+    else:
+        screen.fill("yellow")
 
     # update everything 
     pygame.display.update() 
