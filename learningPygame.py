@@ -2,6 +2,7 @@ import pygame
 from sys import exit
 
 startTime = 0
+score = 0
 
 def display_score(): 
     # mainFont = pygame.font.Font("font\Pixeltype.ttf", 50)
@@ -9,6 +10,7 @@ def display_score():
     scoreSurface = mainFont.render("SCORE: " + str(curTime), False, (64, 64, 64))
     scoreRectangle = scoreSurface.get_rect(center=(screen.get_width()//2, 50))
     screen.blit(scoreSurface, scoreRectangle)
+    return curTime
 
 pygame.init() 
 
@@ -33,12 +35,31 @@ snailSurface = pygame.image.load("graphics\snail\snail1.png").convert_alpha()
 snailRectangle = snailSurface.get_rect(midbottom = (600, 300))
 
 
-playerSurface = pygame.image.load("graphics\player\player_stand.png").convert_alpha()
+playerSurface = pygame.image.load("graphics\player\player_walk_1.png").convert_alpha()
 playerRectangle = playerSurface.get_rect(midbottom = (80, 300)) 
+
+# Intro Screen
+playerStandSurface = pygame.image.load("graphics\player\player_stand.png").convert_alpha() 
+playerStandSurface = pygame.transform.rotozoom(playerStandSurface, 0, 2)
+playerStandRectangle = playerStandSurface.get_rect(center = (screen.get_width() // 2, screen.get_height() // 2))
+
 playerGravity = 0 # Implementing Gravity
 
+
+# Game Title 
+gameTitleSurface = mainFont.render("Jumpy Boi", False, (111, 196, 169)).convert_alpha()
+# gameTitleSurface = pygame.transform.rotozoom(gameTitleSurface, 0, 1.5) 
+gameTitleRectangle = gameTitleSurface.get_rect(center = (screen.get_width() // 2, 50))
+
+# Press Space to Start 
+spaceToStartSurface = mainFont.render("PRESS SPACE TO START", False, (111, 196, 169)).convert_alpha()
+# spaceToStartSurface = pygame.transform.rotozoom(spaceToStartSurface, 0, 1.5)
+spaceToStartSurfaceRectangle = spaceToStartSurface.get_rect(center = (screen.get_width() // 2, 350))
+
+
+
 # Game States 
-gameActive = True 
+gameActive = False 
 
 
 
@@ -108,7 +129,7 @@ while True:
         # pygame.draw.rect(screen, "#c0e8ec", scoreRectangle, 10) # Draws border around text 
         # pygame.draw.rect(screen, "#c0e8ec", scoreRectangle) # Fills the border 
         # screen.blit(scoreSurface, scoreRectangle)
-        display_score()
+        score = display_score()
 
         # SNAIL 
         snailRectangle.x -= 4 
@@ -130,7 +151,27 @@ while True:
         if playerRectangle.colliderect(snailRectangle): 
             gameActive = False
     else:
-        screen.fill("yellow")
+        screen.fill((94, 129, 162))
+        
+        # Player
+        screen.blit(playerStandSurface, playerStandRectangle)
+
+        # Game Title 
+        # pygame.draw.rect(screen, "#c0e8ec", gameTitleRectangle, 10)
+        # pygame.draw.rect(screen, "#c0e8ec", gameTitleRectangle)
+        screen.blit(gameTitleSurface, gameTitleRectangle)
+
+        # Space to Start 
+        # pygame.draw.rect(screen, (64, 64, 64), spaceToStartSurfaceRectangle, 10)
+        # pygame.draw.rect(screen, (64, 64, 64), spaceToStartSurfaceRectangle)
+        if score != 0: 
+            scoreMessageSurface = mainFont.render("Your score: " + str(score), False, (111, 196, 169))
+            scoreMessageRectangle = scoreMessageSurface.get_rect(center = (screen.get_width() // 2, 350))
+            screen.blit(scoreMessageSurface, scoreMessageRectangle)
+        else:
+            screen.blit(spaceToStartSurface, spaceToStartSurfaceRectangle)
+
+
 
     # update everything 
     pygame.display.update() 
